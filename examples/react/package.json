@@ -14,12 +14,17 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "loki",
     "pretest-ci": "build-storybook",
     "test-ci": "loki --requireReference --reactUri file:./storybook-static",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 9009 -s public",
-    "build-storybook": "build-storybook -s public"
+    "build-storybook": "build-storybook -s public",
+    "loki-update": "rm .loki/difference/* .loki/current/*; yarn loki update; yarn loki-report-json && cp -r .loki/report.json .loki/reference-report.json && rm .loki/report.json",
+    "loki-test": "rm .loki/difference/* .loki/current/*; yarn loki test; yarn loki-test-report; yarn loki-open-report",
+    "loki-open-report": "open .loki/report.html",
+    "loki-report-json": "node .loki/loki-generate-visual-json-report.js",
+    "loki-test-report": "yarn loki-report-json && reg-cli --from .loki/report.json --report .loki/report.html",
+    "loki-approve": "yarn loki approve && rm .loki/reference-report.json && cp -r .loki/report.json .loki/reference-report.json"
   },
   "devDependencies": {
     "@storybook/addon-actions": "^5.3.13",
@@ -27,11 +32,15 @@
     "@storybook/addons": "^5.3.13",
     "@storybook/preset-create-react-app": "^1.5.2",
     "@storybook/react": "^5.3.13",
-    "loki": "^0.20.1"
+    "fs": "^0.0.1-security",
+    "loki": "^0.20.1",
+    "path": "^0.12.7",
+    "reg-cli": "^0.16.0",
+    "util": "^0.12.2"
   },
   "loki": {
     "chromeSelector": ".wrapper > *, #root > *",
-    "diffingEngine": "looks-same",
+    "diffingEngine": "gm",
     "configurations": {
       "chrome.laptop": {
         "target": "chrome.docker",
